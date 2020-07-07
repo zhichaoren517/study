@@ -6,8 +6,6 @@ class Subject{
         this.observe = []
     }
     attach( ...observe ){
-        console.log(...observe);
-        
         this.observe.push( ...observe )
     }
     setState(state){

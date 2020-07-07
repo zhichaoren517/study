@@ -1,4 +1,14 @@
 
+/*
+
+    1、第一点，前面已经说过，await命令后面的Promise对象，运行结果可能是rejected，所以最好把await命令放在try...catch代码块中。
+    2、第二点，多个await命令后面的异步操作，如果不存在继发关系，最好让它们同时触发。Promise.all()
+    3、第三点，await命令只能用在async函数之中，如果用在普通函数，就会报错。
+
+**/
+
+
+
 // function timerOut( ms ){
 //     return new Promise( ( resolve , reject ) => {
 //         setTimeout( resolve , ms )

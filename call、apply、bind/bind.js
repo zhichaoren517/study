@@ -56,22 +56,74 @@
 
 // console.log( add.bind(obj,1).bind(obj,5,3)());
 
-Function.prototype.my_bind = function( context ) {
-    var self = this; // 保存原函数
-    var args = Array.prototype.slice.call(arguments); // 剩余的参数转为数组
-    return function() { // 返回一个新函数
-      self.apply(context, Array.prototype.concat.call(args, Array.prototype.slice.call(arguments)));
-    }
-  }
-  var obj = {
-    name : "jack"
-  }
-  var obj1 = {
-      name:"rose"
-  }
-  function getName(){
-      return this.name
-  }
-  getName.my_bind(obj)()
-console.log( getName.my_bind(obj)() );
+// Function.prototype.my_bind = function( context ) {
+//     var self = this; // 保存原函数
+//     var args = Array.prototype.slice.call(arguments); // 剩余的参数转为数组
+//     return function() { // 返回一个新函数
+//       self.apply(context, Array.prototype.concat.call(args, Array.prototype.slice.call(arguments)));
+//     }
+//   }
+//   var obj = {
+//     name : "jack"
+//   }
+//   var obj1 = {
+//       name:"rose"
+//   }
+//   function getName(){
+//       return this.name
+//   }
+//   getName.my_bind(obj)()
+// console.log( getName.my_bind(obj)() );
+
+
+
+var obj = {
+  name : 'jack',
+  age : 18
+}
+var obj1 = {
+  name : 'rose',
+  age : 18
+}
+var name = 'rose';
+var age = 10;
+
+function person( name , age ){
+  console.log(this.name);
+  console.log(this.age); 
+  console.log( [...arguments] , '12' );
+}
+
+Function.prototype.createBind = function(context){
+	let ctx = context || window
+	let _this = this
+	let args = [ ...arguments ].slice(1)
+	return function(){
+		console.log(arguments,'bing');
+		
+		let _arg = [ ...arguments ]
+		args ? _this.call( ctx , ...args , ..._arg ) : _this.call( ctx )
+	}
+}
+// console.log(person.createBind( obj , 'renzhch' , 12 ).createBind(obj1 , 'assa',13 )());
+
+function a(){
+	console.log('a');
+	if( this ){ this()};
+	
+}
+function b(){
+	console.log('b');
+	if( this ){ this()};
+}
+function c(){
+	console.log('c');
+	if( this ){ this()};
+	
+}
+var d = a.bind( b )
+// var e = d.bind( c )
+d()
+// e()
+
 

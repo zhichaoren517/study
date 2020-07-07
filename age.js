@@ -1,1 +1,1 @@
-18
+console.log(12);

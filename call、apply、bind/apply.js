@@ -1,29 +1,39 @@
 
 
-Function.prototype.myapply = function(context){
+// Function.prototype.myapply = function(context){
 
-    var context = context || window ;
-    context.fn = this;
-    var args = [...arguments][1]
-    var res = args ? context.fn( ...args ) : context.fn()
+//     var context = context || window ;
+//     context.fn = this;
+//     var args = [...arguments][1]
+//     var res = args ? context.fn( ...args ) : context.fn()
     
-    delete context.fn 
-    return res
+//     delete context.fn 
+//     return res
 
-}
+// }
 
 var obj = {
-    name : "renzhch"
+    name : 'jack',
+    age : 18
 }
-var obj2 = {
-    name:"jack"
+var name = 'rose';
+var age = 10
+function person( name , age ){
+    console.log(this.name);
+    console.log(this.age); 
+    console.log(name);
+    console.log(age);
 }
-function Person( name ){
-    console.log( this.name );
-    
-}   
-Person.myapply(obj)
-obj.fn()
+Function.prototype.createApply = function( context ){
+
+    let ctx = context || window;
+        ctx.fn = this
+    let _arg = [ ...arguments ][1];
+    var res = _arg ? ctx.fn( ..._arg ) : ctx.fn()
+    ctx.fn = null
+    return res
+}
+person.createApply( obj , [ 'renzhc',12 ] )
 
 
 
@@ -33,12 +43,4 @@ obj.fn()
 
 
 
-// function Father( name , age ){
-//     this.name = name ;
-//     this.age = age
-// }
-// function Mather( name , age ){
-//     Father.myapply( this , [ name , age ] )
-//     this.say = "good"
-// }
-// var mamas = new Mather( "yxq" , 38 )
+

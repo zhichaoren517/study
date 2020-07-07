@@ -166,7 +166,7 @@ Promise.race = function( values ){
         for ( let i = 0; i < values.length; i ++ ) {
             let current = values[ i ]
            if ( ( typeof current === "object" && typeof current != "null" ) || typeof current === "function"  ) {
-                let then = current.then
+                let then = current.then;
                 if ( typeof then === "function" ) {
                     then.call( current , resolve , reject )
                 }else{
