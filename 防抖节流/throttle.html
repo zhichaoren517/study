@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>节流</title>
+</head>
+
+<body>
+
+    <div id="content" style="height:150px;line-height:150px;text-align:center; color: #fff;background-color:#ccc;font-size:80px;"></div>
+ 
+    <script>
+        // 　　节流:指连续触发事件但是在 n 秒中只执行一次函数。即 2n 秒内执行 2 次... 。节流如字面意思，会稀释函数的执行频率。
+        let content = document.getElementById('content');
+
+        
+        content.onclick = superThrottle(count,1000);
+        
+        function count() {
+            console.log('count');
+        };
+
+        function timeStampThrottle( fn , wait ) {
+            // 时间戳版
+            // 如果当前点击的时间戳,减去上次点击时间戳,大于规定时间 , 执行函数 , 并且把当前时间作为下次点击时间的对比值
+            let previous = 0;
+            return function() {
+                let now = Date.now();
+                if( now - previous > wait ){
+                    fn();
+                    previous = now
+                }
+            }
+        }
+
+        function timeOutThrottle( fn , wait ){
+            // 定时器版
+            let timer;
+            return function(){
+                if( !timer ){
+                    timer = setTimeout(() => {
+                        timer = null;
+                        fn()
+                    }, wait);
+                }
+            }
+        }
+
+        /**
+         * 
+         * @desc 节流函数 , 每隔n秒执行
+         * @param fn 目标函数
+         * @param wait 延迟时间
+         * @param type 延迟类型 1、时间戳 ; 2、定时器;
+         * 
+         * */ 
+
+        function superThrottle( fn , wait , type = 1 ){
+            let timer ;
+            let previous = 0 ;
+            return function(){
+                if( type == 1 ){
+                    let now = Date.now();
+                    if( now - previous > wait ){
+                        console.log('stamp');
+                        fn();
+                        previous = now;
+                    }
+                }
+                if( type == 2 ){
+                    if( !timer ){
+                        timer = setTimeout(() => {
+                            console.log('timer');
+                            timer = null;
+                            fn() 
+                        }, wait);
+                    }
+                }
+            }
+        }
+
+    </script>
+</body>
+</html

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .btn{
+        height: 100px;
+        width:300px;
+        border: 1px solid #ccc;
+    }
+</style>
+<body>
+    <div>
+        <div class="btn"></div>
+    </div>
+    <script>
+            //　节流:指连续触发事件但是在 n 秒中只执行一次函数。即 2n 秒内执行 2 次... 。节流如字面意思，会稀释函数的执行频率。
+            let _this = this
+            let dom = document.querySelector('.btn')
+            dom.onclick = immediateThrottle( _this.clickBtn , 1000,true );
+            function clickBtn(){
+                console.log('clickBtn')
+            };
+            function throttle(fn , wait){
+                let timer 
+                return function (){
+                    if( !timer ){
+                        timer = setTimeout(() => {
+                            timer = null ;
+                            fn()
+                        }, wait);
+                    }
+                }
+            }
+            function immediateThrottle( fn , wait ){
+                let pre = 0 ;
+                return function (){
+                    let now = Date.now()
+                    if( now - pre > wait ){
+                        fn();
+                        pre = now
+                    }
+                }
+            }
+    </script>
+</body>
+</html>

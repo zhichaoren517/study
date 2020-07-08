@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .box1{
+        width: 100px;
+        height: 100px;
+        background: #000;
+        opacity: .3;
+        margin:10px;
+        padding: 10px;
+        border:2px solid yellow;
+        box-sizing: content-box;
+        /* 标准盒模型width指的是纯宽度,不计算padding和margin */
+        
+    }
+    .box2{
+        width: 100px;
+        height: 100px;
+        background: skyblue;
+        opacity: .3;
+        margin:10px;
+        padding: 10px;
+        border:2px solid yellow;
+        box-sizing: border-box;
+        /* 怪异盒模型 width定义好后,padding和margin都会包含在width里面,也就是说width始终是设置的值不会增大 */
+    }
+</style>
+<body>
+    <div class="box1"></div>
+    <div class="box2"></div>
+</body>
+</html>

@@ -1,0 +1,221 @@
+#!bin/bash
+# WORKSPACE jenkins自有变量，表示该任务的工作空间
+if [ "$message"x = x ]
+then
+echo "请填写提交信息 message"
+exit 1
+fi
+
+
+#部署模式（product|release)
+mode=release
+#部署目录(html|html2|html_openbiz，分别对应index，index2, html_openbiz)
+filePath=$file_path
+
+productPath=/opt/fs/workspace/deploy/fstest
+productConfigPath=/opt/fs/workspace/deploy/FSFSConfig
+#bakPath=${WORKSPACE}/product/bak
+srcPath=${WORKSPACE}
+buildDist=${WORKSPACE}/build-dist
+
+suffix="-dist"
+name=`date '+%Y%m%d%H%M%S'`
+distPath=${buildDist}/${name}
+
+#md5配置文件
+configTempFile=${distPath}/${filePath/html/index}_config_temp
+configFileName=${filePath/html/index}_config
+configFile=${distPath}/${configFileName}
+
+appSrcPath=${srcPath}/app
+appDistPath=${distPath}/app-dist
+
+paasSrcPath=${srcPath}/paas
+paasDistPath=${distPath}/paas
+
+#LOCKFILE=${srcPath}/.lock
+#if [ -e ${LOCKFILE} ] && kill -0 `cat ${LOCKFILE}`; then
+#    echo "already running"
+#    exit 1
+#fi
+
+#trap "rm -f ${LOCKFILE}; exit" INT TERM EXIT
+#echo $$ > ${LOCKFILE}
+
+if [ ${mode} = development ]
+    then
+    appDistPath=${distPath}/app
+    suffix=""
+fi
+
+function error_exit
+{
+    echo "$1" 1>&2
+#    rm -f ${LOCKFILE}
+    exit 1
+}
+
+rm -rf ${distPath} || error_exit "Error: rm -rf ${distPath}"
+mkdir -p ${distPath} || error_exit "mkdir -p ${distPath}"
+touch ${configTempFile} || error_exit "touch ${configTempFile}"
+
+# 主项目
+    item=manage
+    var="main_${item}"
+
+    cd ${srcPath}/${item} || error_exit "cd ${srcPath}/${item}"
+    if [ $exec_npm_install == true ]
+    then
+          npm install --registry http://registry-npm.firstshare.cn
+    fi
+    npm run build-${mode} || error_exit "npm run build-${mode}"
+    
+    mkdir -p ${distPath}/${item}${suffix} || error_exit "mkdir -p ${distPath}/${item}${suffix}"
+    cp -Rf ${srcPath}/${item}/${item}-dist ${distPath}/ || error_exit "cp -Rf ${srcPath}/${item}/${item}-dist/ ${distPath}/${item}${suffix}/"
+    
+    #读取某一模块的tpl_config至build-dist的tpl config文件
+    cat ${srcPath}/${item}/${item}-dist/tpl_config >> ${configTempFile}      
+
+
+
+
+
+
+
+pushd ${buildDist}
+echo copy -dist files to target
+#sudo cp -rf ${buildDist}/${name}/* ${productPath}/${filePath}/
+#scp -r ${buildDist}/${name}/* root@10.112.19.1:/opt/CONF/Fxiaoke_Test_Environment_Web/FxiaokeWeb/${filePath}/
+scp -r ${buildDist}/${name}/* root@10.112.19.1:/opt/CONF/Fxiaoke_Test_Environment_Web/fspage/${filePath}/
+popd
+
+#pushd ${productPath}/${filePath}
+#svn add * --force || error_exit "error occured in svn add to target"
+#svn ci -m "${message}" || error_exit "error occured in svn ci to target"
+#popd
+
+pushd ${productConfigPath}
+#svn cleanup || error_exit "error occcured in svn cleanup target -- ."
+#svn revert -R .
+svn up
+popd
+
+touch ${configFile}
+oriArr=()
+newArr=()
+index=0
+while read LINE
+do
+    if [ "$LINE"x != x ]
+    then
+        oriArr[${index}]=${LINE}
+        index=$((${index} + 1))
+    fi
+done < ${productConfigPath}/${configFileName}
+index=0
+while read newLINE
+do
+    if [ "$newLINE"x != x ]
+    then
+        newArr[${index}]=${newLINE}
+        index=$((${index} + 1))
+    fi
+done < ${configTempFile}
+
+for oriItem in ${oriArr[*]}
+do
+    oriItemArr=(${oriItem//:/ })
+    oriK=${oriItemArr[0]}
+    oriV=${oriItemArr[1]}
+    flag=false
+     
+    for newItem in ${newArr[*]}
+    do
+        newItemArr=(${newItem//:/ })
+        newK=${newItemArr[0]}
+        newV=${newItemArr[1]}
+        if [ "${oriK}"x = "${newK}x" ]
+        then
+            flag=true
+            echo "${oriK}:${newV}" >> ${configFile}
+        fi 
+    done
+    if [ $flag = false ]
+    then
+        echo "${oriK}:${oriV}" >> ${configFile}
+    fi             
+done
+
+for newItem in ${newArr[*]}
+do
+    newItemArr=(${newItem//:/ })
+    newK=${newItemArr[0]}
+    newV=${newItemArr[1]}
+    flag=false
+     
+    for oriItem in ${oriArr[*]}
+    do
+        oriItemArr=(${oriItem//:/ })
+        oriK=${oriItemArr[0]}
+        if [ "${oriK}"x = "${newK}x" ]
+        then
+            flag=true
+        fi 
+    done
+    if [ $flag = false ]
+    then
+        echo "${newK}:${newV}" >> ${configFile}
+    fi             
+done
+
+echo copy "${configFile}" to target
+sudo cp ${configFile} ${productConfigPath}/
+
+echo "=================================="
+echo "the config is: ${productConfigPath}/${configFileName}"
+cat ${productConfigPath}/${configFileName}
+echo "=================================="
+
+pushd ${productConfigPath}
+svn add * --force || error_exit "error occured in svn add to target"
+
+svninfo=`svn ci -m "${message}" || error_exit "error occured in svn ci to target"`
+#如果svn上没有提交最新代码，获取svn上最新代码版本号
+svnLeastVersion=`svn info`
+#echo 'printvar'$svnleastVersion
+leastsvnno=`echo $svnLeastVersion |awk -F "Revision:" '{print $2}'|awk -F "Node" '{print $1}'|awk -F " " '{print $1}'|head -n 1`
+popd
+
+rm -rf ${buildDist}/${name}
+#rm -f ${LOCKFILE}
+
+#Refresh Interface
+curl http://10.112.32.21:8026/XV/Redis/Update
+
+
+out=`echo $filePath | awk '{split($0,a,"html");print a[2]}'`
+
+curl http://10.112.32.21:8026/XV/Redis/Update?indexValue=$out
+#将配置文件中的数据读取后进行格式化,然后输出
+configFilename="index"$out"_config"
+cd /opt/fs/workspace/deploy/FSFSConfig
+configmd5=`sh /opt/fs/workspace/deploy/FSFSConfig/varFormat.sh $configFilename`
+#echo $configmd5
+#echo 'svn信息'$svninfo
+svnNo=`echo $svninfo |awk -F "revision " '{print $2}'|awk -F "." '{print $1}'`
+#调用前端代码生效接口，如svn有更新，生效最新代码，如未提交最新代码，生效svn上最高版本代码
+if [ "${svnNo}"x = "x" ];
+then
+    echo "no change commit to svn"
+    curl 'http://dev.ceshi112.com/xvPageApi/enableXVIndexConfig' -H 'Host: dev.ceshi112.com' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0) Gecko/20100101 Firefox/52.0' -H 'Accept: */*' -H 'Accept-Language: zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3' -H 'Accept-Encoding: gzip, deflate' -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' -H 'X-Requested-With: XMLHttpRequest' -H 'Referer: http://dev.ceshi112.com/xvPage/indexDetail?page=Index'$out -H 'Cookie: JSESSIONID=ACEBD09D824C28031311B1F7E47F5F26' -H 'Connection: keep-alive' --data 'page=Index'$out'&config='$configmd5'&revision='$leastsvnno'&date=2017-04-07T06%3A52%3A30.968869Z&comment=BPM&author=sunsk'
+else
+    echo "the version of svn commit is "+$svnNo
+
+    curl 'http://dev.ceshi112.com/xvPageApi/enableXVIndexConfig' -H 'Host: dev.ceshi112.com' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0) Gecko/20100101 Firefox/52.0' -H 'Accept: */*' -H 'Accept-Language: zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3' -H 'Accept-Encoding: gzip, deflate' -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' -H 'X-Requested-With: XMLHttpRequest' -H 'Referer: http://dev.ceshi112.com/xvPage/indexDetail?page=Index'$out -H 'Cookie: JSESSIONID=ACEBD09D824C28031311B1F7E47F5F26' -H 'Connection: keep-alive' --data 'page=Index'$out'&config='$configmd5'&revision='$svnNo'&date=2017-04-07T06%3A52%3A30.968869Z&comment=BPM&author=sunsk'
+fi
+
+
+# upload deploy info to r2
+echo "upload deploy info r2=================="
+curl 'http://oss.firstshare.cn/r2/api/webDeployRecords/add' -H 'Pragma: no-cache' -H 'Origin: http://oss.firstshare.cn' -H 'Accept-Encoding: gzip, deflate, br' -H 'Accept-Language: zh-CN,zh;q=0.9' -H 'User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36' -H 'Content-Type: application/json;charset=UTF-8' -H 'Accept: application/json, text/plain, */*' -H 'Cache-Control: no-cache'  --data-binary "{\"deployPath\":\"${filePath}\",\"module\":\"${item}\",\"jenkinsPublishUser\":\"${BUILD_USER_ID}|${BUILD_USER}\",\"branch\":\"${branch}\",\"deployDesc\":\"${message}\",\"deployConfig\":\"${deployConfig}\"}" --compressed
+echo "upload deploy info r2 end=================="

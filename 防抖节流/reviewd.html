@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .btn{
+        height: 100px;
+        width:300px;
+        border: 1px solid #ccc;
+    }
+</style>
+<body>
+    <div>
+        <div class="btn"></div>
+    </div>
+    <script>
+            //将多次高频操作优化为只在最后一次执行，通常使用的场景是：用户输入，只需再输入完成后做一次输入校验即可。
+            let _this = this
+            let dom = document.querySelector('.btn')
+            dom.onclick = superDebounce( _this.clickBtn , 500,true );
+            function clickBtn(){
+                console.log('clickBtn')
+            };
+            //防止频繁触发事件
+            function delayDebounce( fn , wait , immediate ){
+                // 非立即执行版   重复点击会停止之前的timer 在创建一个timer 只有最后一次点击生效
+                let timer;
+                return function(){
+                    if( timer ) clearTimeout( timer );
+                    timer = setTimeout( () => {
+                        fn()
+                    } , wait )
+                }
+            }
+            function immediateDebounce( fn , wait ){
+                // 立即执行版 ,第一次没有timer , 执行函数 , 在规定时间内 , 再次点击 停止timer , 这时 如果timer不为null说明点击的间隔还在规定范围内, 那么重新创建一个timer
+                let timer ;
+                return function(){
+                    if( timer ) clearTimeout(timer) ; 
+                    
+                    let callNow = !timer
+                    
+                    timer = setTimeout( () => {
+                        timer = null
+                    } , wait )
+
+                    if( callNow ) fn();
+                }
+            }
+            /**
+             * @desc 函数防抖
+             * @params fn 目标函数
+             * @params wait 延迟时间 (ms)
+             * @params immediate 是否点击立即执行
+             * 
+            */
+            function superDebounce( fn , wait , immediate ){
+                let timer;
+                return function(){
+                    if( timer ) clearTimeout(timer);
+                    if( immediate ){
+                        let callNow = !timer;
+                        timer = setTimeout( () => {
+                            timer = null
+                        } ,wait)
+                        if(callNow) fn();
+                    }else{
+                        timer = setTimeout( () => {
+                            fn()
+                        } , wait)
+                    }
+                }
+            }
+    </script>
+</body>
+</html>
