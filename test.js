@@ -504,36 +504,36 @@ function conA( arr ){
 // console.log(formate(str));
 
 // 1593934387043
-function timeFormate( t ){
-	if( t.toString().length == 10 ){
-		t = t * 100
-	}
+// function timeFormate( t ){
+// 	if( t.toString().length == 10 ){
+// 		t = t * 100
+// 	}
 	
-	if( t.toString().length !=10 && t.toString().length != 13 ){
-		return "时间戳格式不正确"
-	}
-	let n = Date.now();
-	let o = ( n - t ) / 1000
+// 	if( t.toString().length !=10 && t.toString().length != 13 ){
+// 		return "时间戳格式不正确"
+// 	}
+// 	let n = Date.now();
+// 	let o = ( n - t ) / 1000
 	
-	let tHBefore = 2 * 60 * 60
-	if( o < 60 ){
-		return '刚刚'
-	}
-	if( o < tHBefore && o >= 60 ){
-		return "2小时前"
-	}
-	if( o > tHBefore ){
-		let date = new Date( t )
-		let y = date.getFullYear()
-		let m = date.getMonth() + 1
-		let d = date.getDate()
-		let h = date.getHours()
-		let mi = date.getMinutes()
-		return `${y}-${m}-${d} ${h}:${mi}`
-	}
+// 	let tHBefore = 2 * 60 * 60
+// 	if( o < 60 ){
+// 		return '刚刚'
+// 	}
+// 	if( o < tHBefore && o >= 60 ){
+// 		return "2小时前"
+// 	}
+// 	if( o > tHBefore ){
+// 		let date = new Date( t )
+// 		let y = date.getFullYear()
+// 		let m = date.getMonth() + 1
+// 		let d = date.getDate()
+// 		let h = date.getHours()
+// 		let mi = date.getMinutes()
+// 		return `${y}-${m}-${d} ${h}:${mi}`
+// 	}
 	
-}
-console.log( timeFormate( 1511111187043 ) );
+// }
+// console.log( timeFormate( 1511111187043 ) );
 
 
 
@@ -542,9 +542,98 @@ console.log( timeFormate( 1511111187043 ) );
 
 
 // 1,234,567,890.12
-function formate( num ){
-}
-formate( 1234567890.12 ) 
+// function formate( num ){
+// }
+// formate( 1234567890.12 ) 
 
-let str = '1234567890.12'
-console.log( str.split('').reverse().join('').replace( /^/gi , str ) );
+// let str = '1234567890.12'
+// console.log( str.split('').reverse().join('').replace( /^/gi , str ) );
+
+
+// let str = "  a b c  "
+
+// let reg = /^\s+|\s+$/gi
+// console.log( str.replace( reg,'' ) );
+
+// console.log( str.split('') );
+
+
+// function Foo() {
+// 	getName = function() {
+// 		console.log(1)
+// 	}
+// 	return this;
+// }
+// Foo.getName = function() {
+// 	console.log(2)
+// }
+// Foo.prototype.getName = function() {
+// 	console.log(3)
+// }
+// var getName = function() {
+// 	console.log(4)
+// }
+
+// function getName() {
+// 	console.log(5)
+// }
+// Foo.getName();
+// getName()
+// Foo().getName()
+// getName();
+// new Foo.getName();
+// new Foo().getName()
+
+
+// var o1 = {
+// 	start:0,
+// 	end:6
+// }
+// var o2 ={
+// 	start:6,
+// 	end:30
+// }
+
+// var o3 ={
+// 	start:6,
+// 	end:30
+// }
+
+// function check( l , r ){
+// 	let lStart = l.start ;
+// 	let lEnd = l.end ;
+// 	let rStart = r.start ;
+// 	let rEnd = r.end ;
+// 	if( lStart < rStart && lEnd < rStart ){
+// 		return false
+// 	}else if( rStart < lStart && rStart < lEnd ){
+// 		return false
+// 	}
+// 	return true
+// }
+
+// function checkAndMerge( arr ){
+
+
+// }
+
+// console.log(  checkAndMerge( [ o1 , o2 , o3 ] )  );
+var arr = [ 6,5,7,3,8,2,1,9 ]
+function mergeSort(arr){
+	if( !Array.isArray(arr) ) return arr ;
+	if( arr.length <= 1 ) return arr ;
+	let left = [] , right = [] ;
+	let num = Math.floor( arr.length / 2 );
+	let numVal = arr.splice( num,1 )[0] ;
+	for (let i = 0; i < arr.length; i++) {
+		if( arr[i] < numVal ){
+			left.push(arr[i])
+		}else{
+			right.push(arr[i])
+		}
+	}
+	return [ ...mergeSort(left) , numVal , ...mergeSort(right) ]
+}
+
+console.log(mergeSort(arr));
+

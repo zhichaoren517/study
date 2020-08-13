@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app"></div>
+    <select>
+        <option value="grapefruit">葡萄柚</option>
+        <option value="lime">酸橙</option>
+        <option selected value="coconut">椰子</option>
+        <option value="mango">芒果</option>
+      </select>
+    <!-- <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script> -->
+    <script src="https://cdn.staticfile.org/react/16.4.0/umd/react.development.js"></script>
+    <script src="https://cdn.staticfile.org/react-dom/16.4.0/umd/react-dom.development.js"></script>
+    <script src="https://cdn.staticfile.org/babel-standalone/6.26.0/babel.min.js"></script>
+    <script type="text/babel">
+        const ROOT = document.getElementById("app")
+        // function Welcome(props){
+        //     return <h1> Welcome  , { props.name } </h1>
+        // }  
+        // function Root(){
+        //     return (
+        //         <div>
+        //             <Welcome name="jack" />
+        //             <Welcome name="rose" />
+        //             <Welcome name="ren" />
+        //         </div>
+        //     )
+        // }
+        // let element = <Root />
+        // ReactDOM.render( element , APP )
+        class Clock extends React.Component{
+            constructor(props){
+                super(props) ;
+                this.state = { 
+                    date: new Date()
+                }
+            }
+            componentDidMount(){
+                this.timer = setInterval( () => this.tick() , 1000 )
+            }
+            componentWillUnmount(){
+                clearInterval(timer)
+            }
+            tick(){
+                this.setState({
+                    date:new Date()
+                })
+            }
+            render(){
+                
+                return (
+                    <div>
+                        <h1>Hello, world!</h1>
+                        <h2>It is { this.state.date.toLocaleTimeString() } </h2>
+                    </div>
+                )
+            }
+        }
+        class Toggle extends React.Component{
+            constructor(props){
+                super(props)
+                this.state = {
+                    isToggleOn:true
+                }
+                // this.handleClick = this.handleClick.bind(this)
+            }
+            handleClick(e) {
+                this.setState( state => ({
+                    isToggleOn:!state.isToggleOn
+                }) )
+            }
+            render(){
+                return (
+                    <button onClick={ this.handleClick.bind(this) }>
+                        { this.state.isToggleOn ? "ON" : "OFF" }
+                    </button>
+                )
+            }
+        }
+        function App(){
+            return (
+                <div>
+                    <Clock/>
+                    <Toggle/>
+                </div>
+            )
+        }
+        ReactDOM.render(
+            <App/>,
+            ROOT
+        )
+    </script>
+</body>
+</html>

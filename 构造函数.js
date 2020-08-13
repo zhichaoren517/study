@@ -114,7 +114,7 @@
 
 
 
-//构造函数模式
+    //构造函数模式
     // function Person(name,age){
     //     this.name = name;
     //     this.age = age ;
@@ -127,3 +127,10 @@
     // // console.log(p1=p2)
     // console.log(p2.getAge())
     // console.log(p1)
+
+    function mynew( construc , arg ){
+        let obj = new Object() ; 
+        obj.__proto_ = construc.prototype
+        let res = construc.apply( obj , arg );
+        return typeof res == "object" ? res : obj
+    }

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .boil{
+            color:red
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+    <script src="https://cdn.staticfile.org/react/16.4.0/umd/react.development.js"></script>
+    <script src="https://cdn.staticfile.org/react-dom/16.4.0/umd/react-dom.development.js"></script>
+    <script src="https://cdn.staticfile.org/babel-standalone/6.26.0/babel.min.js"></script>
+    <script type="text/babel">
+        const ROOT = document.getElementById("app");
+        function BoilingVerdict( props ){
+            if( props.celsius >= 100 ){
+                return <p className="boil">The water would boil.</p>;
+            }
+            return <p>The water would not boil.</p>;
+        }
+        class Calculator extends React.Component{
+            constructor(props){
+                super(props);
+                this.handChange = this.handChange.bind(this)
+                this.state = {
+                    temperature: '',
+                }
+            }
+            handChange(e){
+                this.setState({
+                    temperature:e.target.value
+                })
+            }
+            render(){
+                return (
+                    <fieldset>
+                        <legend>Enter temperature in Celsius:</legend>
+                        <input value={ this.state.temperature } 
+                               onChange={ this.handChange } 
+                        />
+                        <BoilingVerdict celsius={ this.state.temperature }></BoilingVerdict>
+                    </fieldset>
+                )
+            }
+        }
+        ReactDOM.render(
+            <Calculator/>,
+            ROOT
+        )
+    </script>
+</body>
+</html>

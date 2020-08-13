@@ -1,6 +1,6 @@
 let set = new Set( [ 1,2,3,4,2,3 ] )
 
-// delete   has 	add 	clear
+// delete   has 	add 	clear   size
 console.log(set);
 console.log(set.size);
 set.add(5)

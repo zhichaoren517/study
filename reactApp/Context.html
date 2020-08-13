@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app"></div>
+    <script src="https://cdn.staticfile.org/react/16.4.0/umd/react.development.js"></script>
+    <script src="https://cdn.staticfile.org/react-dom/16.4.0/umd/react-dom.development.js"></script>
+    <script src="https://cdn.staticfile.org/babel-standalone/6.26.0/babel.min.js"></script>
+    <script type="text/babel">
+        const ROOT = document.getElementById("app");
+        // const ThemeContext = React.createContext('light');
+        class ThemedButton extends React.Component{
+            // static ContextType = ThemeContext
+            componentDidMount(){
+                console.log(this);
+                
+            }
+            render(){
+                // 报错了这
+                return (
+                    <button >{this.props.theme}</button>
+                )
+            }
+        }
+        function Toolbar(props){
+            return (
+                <div>
+                    <ThemedButton theme="dark"></ThemedButton>
+                </div>
+            )
+        }
+        class App extends React.Component{
+        
+            render(){
+                return (
+                    // <ThemeContext.Provider value="dark">
+                        <Toolbar></Toolbar>
+                    // </ThemeContext.Provider>
+                )
+            }
+        }
+        ReactDOM.render(
+            <App 
+            />,
+            ROOT
+        )
+    </script>
+</body>
+</html>

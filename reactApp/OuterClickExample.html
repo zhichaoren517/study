@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app"></div>
+    <script src="https://cdn.staticfile.org/react/16.4.0/umd/react.development.js"></script>
+    <script src="https://cdn.staticfile.org/react-dom/16.4.0/umd/react-dom.development.js"></script>
+    <script src="https://cdn.staticfile.org/babel-standalone/6.26.0/babel.min.js"></script>
+    <script type="text/babel">
+        const ROOT = document.getElementById("app");
+
+            class OuterClickExample extends React.Component{
+                constructor(props){
+                    super(props)
+                    this.state = {
+                        isOpen:false
+                    }
+                    this.toggleContainer = React.createRef();
+                    this.onClickHandler = this.onClickHandler.bind(this)
+                    this.onClickOutsideHandler = this.onClickOutsideHandler.bind(this)
+                }
+                componentDidMount(){
+                    window.addEventListener("click" , this.onClickOutsideHandler ) ;
+                }
+                componentWillUnmount(){
+                    window.removeEventListener("click" , this.onClickOutsideHandler ) ;
+                }
+                onClickHandler(e){
+                    this.setState(currentState=>({
+                        isOpen:!currentState.isOpen
+                    }))
+                    
+                }
+                onClickOutsideHandler(event){
+                    if (this.state.isOpen && !this.toggleContainer.current.contains(event.target)) {
+                        this.setState({ isOpen: false });
+                    } 
+                }
+                render(){
+                    return (
+                        <div ref={this.toggleContainer}>
+                           <button onClick={ this.onClickHandler }>Select an option</button> 
+                           { this.state.isOpen && (
+                            <ul>
+                                <li>Option 1</li>
+                                <li>Option 2</li>
+                                <li>Option 3</li>
+                            </ul>
+                           )  }
+                        </div>
+                    )
+                }
+            }
+
+        ReactDOM.render(
+            <OuterClickExample 
+            />,
+            ROOT
+        )
+    </script>
+</body>
+</html>

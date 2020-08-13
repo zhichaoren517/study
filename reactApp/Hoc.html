@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app"></div>
+    <script src="https://cdn.staticfile.org/react/16.4.0/umd/react.development.js"></script>
+    <script src="https://cdn.staticfile.org/react-dom/16.4.0/umd/react-dom.development.js"></script>
+    <script src="https://cdn.staticfile.org/babel-standalone/6.26.0/babel.min.js"></script>
+    <script type="text/babel">
+        const ROOT = document.getElementById("app");
+
+        const DataSource = {
+            getComments(){
+                return [
+                    {
+                        name:"jack",
+                        age:18
+                    },
+                    {
+                        name:"rose",
+                        age:20
+                    },
+                ]
+            }
+        }
+
+        class CommentList extends React.Component{
+            constructor(props){
+                super(props);
+            }
+            render(){
+                return (
+                    <React.Fragment>
+                        {this.props.data.length&&this.props.data.map( (d,index) => (
+                            <React.Fragment key={index}>
+                                <div>姓名:{d.name}</div>
+                                <div>年龄:{d.age}</div>
+                            </React.Fragment>
+                        ) )}
+                    </React.Fragment>
+                )
+            }
+        }
+
+        function withSubscription(WrappedComponent, selectData){
+            return class extends React.Component{
+                constructor(props){
+                    super(props);
+                    this.handleChange = this.handleChange.bind(this);
+                    this.state = {
+                        data:selectData( DataSource , props )
+                    }
+                }
+                handleChange(){
+                    this.setState({
+                        data:selectData( DataSource , this.props )
+                    })
+                }
+                render(){
+                    return(
+                        <WrappedComponent data={this.state.data} {...this.props}></WrappedComponent>
+                    )
+                }
+            }
+        }
+
+        const CommentListWithSubscription = withSubscription(
+            CommentList,
+            ( DataSource )=>{
+                return DataSource.getComments()
+            }
+        )
+        ReactDOM.render(
+            <CommentListWithSubscription 
+            hhaha="hahaha"
+            />,
+            ROOT
+        )
+    </script>
+</body>
+</html>
