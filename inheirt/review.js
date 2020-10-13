@@ -6,9 +6,9 @@ function Person(name){
 }
 Person.prototype.age = 10;
 
-// function Per(){
-//     this.name = 'jack'
-// }
+function Per(){
+    this.name = 'jack'
+}
 
 // 原型链继承
 // 缺点:无法传参 , 子类constructor被更改

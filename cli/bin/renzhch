@@ -1,0 +1,41 @@
+#! /usr/bin/env node
+
+console.log("renzhch is god");
+
+const program = require("commander")
+
+const clearArgs = cmd => {
+    const args = {};
+    
+    cmd.options.forEach(o => {
+        const key = o.long.slice(2);
+        if( cmd[key] ) args[key] = cmd[key]
+    });
+    
+    return args
+}
+//玩意重名了  强制创建模式
+// 有两种最常用的选项，一类是 boolean 型选项，选项无需配置参数，另一类选项则可以设置参数（使用尖括号声明）。如果在命令行中不指定具体的选项及参数，则会被定义为undefined。
+program
+    .command( "create <app-name>" )
+    .description("create a new project")
+    .option( "-f,--force","overwrite target directory if it ecists" )
+    .action( ( name , cmd ) => {
+        // console.log(name,cmd);
+        console.log(clearArgs(cmd));
+        
+        
+    } )
+    // 选项的参数使用方括号声明表示参数是可选参数，即传值不是必须的。
+program
+    .command( "config [value]" )
+    .description( "inspect and modify the config" )
+    .option( "-g,-get <path>" )
+    .option( "-s,--set <path> <value>" )
+
+program
+    .usage("<command> [option]")
+    .version( `版本是:${require("../package.json").version}` )
+
+//解析用户执行命令传入的参数
+program.parse(process.argv)

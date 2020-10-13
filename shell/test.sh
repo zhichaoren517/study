@@ -14,3 +14,4 @@ arr=(
 )
 echo ${#arr[@]}
 echo $0
+echo "\033[32m 资源配置css文件 \033[0m"

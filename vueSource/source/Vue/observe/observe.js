@@ -9,7 +9,7 @@ export function defineReactive( data , key , value ){
     let dep = new Dep()
     Object.defineProperty( data , key , {
         get(){
-            if( Dep.target ){//只要对这个睡醒进行了取值操作,就会将当前的watcher存进去
+            if( Dep.target ){//只要对这个属性进行了取值操作,就会将当前的watcher存进去
                 // 我们希望存入的watcher不能重复,如果重复会造成多次渲染 
                 dep.depend() // 他想让dep中可以存放watcher,也想让watcher中存入dep
             }

@@ -16,7 +16,6 @@ export const util = {
         node.textContent = node.textContent.replace( detaultREG , function(...arg){
             return util.getValue( vm , arg[1] )
         } )
-        
     }
 }
 export function compiler( node , vm ){

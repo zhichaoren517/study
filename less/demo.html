@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style type="text/less">
+
+        @width: 100px;
+        @height:100px;
+        @background:skyblue;
+        @red:red;
+        @blue:blue;
+        @green:green;
+        #colors(){
+            primary: blue;
+            secondary: green;
+        }
+        .wh{
+            width: @width;
+            height: @height;
+        }
+
+        #red{
+            background: #colors[primary];
+            .wh()
+        }
+        #blue{
+            background: @blue;
+            .wh()
+        }
+        #green{
+            background: @green;
+            .wh()
+        }
+
+        
+    </style>
+
+    <script src="https://cdn.bootcdn.net/ajax/libs/less.js/1.0.41/less-1.0.41.min.js" ></script>
+</head>
+<body>
+
+    <div id="red"></div>
+    <div id="blue"></div>
+    <div id="green"></div>
+</body>
+</html>
