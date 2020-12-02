@@ -93,11 +93,14 @@
         this.age = age
     }
 
-    function createObj(obj , ...arg){
-        let o = new Object()
-        o.__proto__ = obj.prototype;
-        let result = obj.apply( o , arg )
-        return typeof result === "object" ? result : o;
+
+    function createObj( constructor , ...props ){
+
+        var newObj = new Object()
+        newObj.__proto__ = constructor.prototype;
+        var res = constructor.call( newObj , ...props )
+        return typeof res == "object" ? res : newObj
+    
     }
 
     let p = new Person( 'jack' , 18 )

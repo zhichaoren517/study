@@ -17,14 +17,14 @@
 //     console.log (5);
 // }
  
-// //请写出以下输出结果：
-// Foo.getName();
-// getName();
-// Foo().getName();
-// getName();
-// new Foo.getName();
-// new Foo().getName();
-// new new Foo().getName();
+// // //请写出以下输出结果：
+// Foo.getName(); // 2
+// getName();//4
+// Foo().getName();//1
+// getName();//1
+// new Foo.getName();//2
+// new Foo().getName();//3
+// new new Foo().getName();//3
 // ///////////////////////////////////
 // function User(name) {
 // 	var name = name; //私有属性
@@ -250,102 +250,33 @@
 // let obj = create(obj1)
 // console.log(obj1);
 
-// let arr = [ 1 , 3 , 4 , [ 5 , [ 6 , [ 7 , 8 ] ]  ] ]
-// function flatten( arr ) {
-// 	let res = [] ;
-// 	return function ( brr ) {
-// 		for (let i = 0; i < brr.length; i++) {
-// 			if( Array.isArray( brr[i] ) ){
-// 				res.concat( arguments.callee( brr[i] ) )
-// 			}else{
-// 				res.push( brr[ i ] )
-// 			}
-			
-// 		}
-// 		return res
-// 	}
-// }
-// console.log( flatten()( arr ) );
 
-// 防抖
-// function debounce( fn , wait , immediate){		
-// 	let timer 
-// 	return function(){
-// 		if( timer ) clearTimeout( timer );
-// 		if( !immediate ){
-// 			timer = setTimeout( () => {
-// 				fn ().call(this)
-// 			} , wait )
+// let arr = [ 1 , 3 , 4 , [ 5 , [ 6 , [ 7 , 8 ] ]  ],[] ]
+// console.time("time")
+// function flatten(arr){
+// 	// 3.8ms
+// 	let res = []
+// 	arr.forEach( item => {
+// 		if( Array.isArray(item) ){
+// 		 	res = [ ...res , ...flatten(item) ]
 // 		}else{
-// 			let callNow = !timer ; 
-// 			timer = setTimeout(() => {
-// 				timer = null
-// 			}, wait);
-// 			if( callNow ) fn().call(this)
+// 			res.push(item)
 // 		}
-// 	}
+// 	});
+// 	return res
 // }
-// // 节流
-
-// function throttle( fn , wait , immediate ){
-// 	let timer 
-// 	let pre = 0 ;
-// 	return function (){
-// 		if( immediate){
-// 			if( !timer ){
-// 				timer = setTimeout(() => {
-// 					 timer = null;
-// 					 fn().call(this)
-// 				}, timeout);
-// 			}
-// 		}else{
-// 			if( Date.now() - pre >= wait ){
-// 				pre = Date.now()
-// 				fn().call( this )
-// 			}
-// 		}
-// 	}
-// } 
-
-
-
-
-//实现一个bind
-var a = 2
-obj = {
-	a:1
-}
-function conA( arr ){
-	console.log(arr);
-	
-	console.log(this.a);
-}
-
-// Function.prototype.myCall = function( context , ...arg ){
-// 	let ctx = context || window ; 
-// 	let fn = this ; 
-// 	ctx.fn = fn;
-// 	let res = ctx.fn( ...arg )
-// 	delete ctx.fn
-// 	return res ;
+// function flatten(arr){
+// 	// 4.335ms
+// 	console.log(arr.toString().split(","));
 // }
-// Function.prototype.myApply = function( context , arg ){
-// 	let ctx = context || window ; 
-// 	let fn = this ; 
-// 	ctx.fn = fn;
-// 	let res = ctx.fn( ...arg )
-// 	delete ctx.fn
-// 	return res ;
+// function flatten(arr){
+// 	// 3.6
+// 	return arr.reduce( ( pre,cur , index , arr ) => {
+// 		return pre.concat( Array.isArray(cur) ? flatten(cur) : cur )
+// 	},[] )
 // }
-// Function.prototype.myBind = function( context , ...arg ){
-// 	let fn = this ; 
-// 	let _arg = [ ...arg ]
-// 	return function(){
-// 		fn.apply( context , _arg.concat( [].slice.call( arguments ) ) )
-// 	}
-// }
-// let ins = conA.myBind( obj , 1 ,2 ,3 )
-// ins()
+// console.log(flatten(arr));
+// console.timeEnd("time")
 
 
 // 实现一个instanceof
@@ -417,27 +348,7 @@ function conA( arr ){
 
 
 
-// function throttle( fn , wait , type ){
-// 	let timer ;
-// 	let pre = 0
-// 	return function(){
-// 		// 1  定时器版
-// 		if( type == 1 ){
-// 			if( !timer ){
-// 				timer = setTimeout( () => {
-// 					timer = null ; 
-// 					fn()
-// 				} , wait )
-// 			}
-// 		}
-// 		if( type == 2 ){
-// 			if( Date.now() - pre > wait ){
-// 				fn()
-// 				pre = Date.now()
-// 			}
-// 		}
-// 	}
-// }
+
 // // 斐波那契
 // var fibonacci = function (){
 // 	let memo = [ 0 , 1 ]
@@ -618,22 +529,239 @@ function conA( arr ){
 // }
 
 // console.log(  checkAndMerge( [ o1 , o2 , o3 ] )  );
-var arr = [ 6,5,7,3,8,2,1,9 ]
-function mergeSort(arr){
-	if( !Array.isArray(arr) ) return arr ;
-	if( arr.length <= 1 ) return arr ;
-	let left = [] , right = [] ;
-	let num = Math.floor( arr.length / 2 );
-	let numVal = arr.splice( num,1 )[0] ;
-	for (let i = 0; i < arr.length; i++) {
-		if( arr[i] < numVal ){
-			left.push(arr[i])
-		}else{
-			right.push(arr[i])
-		}
-	}
-	return [ ...mergeSort(left) , numVal , ...mergeSort(right) ]
-}
+// var arr = [ 6,5,7,3,8,2,1,9 ]
+// function mergeSort(arr){
+// 	if( !Array.isArray(arr) ) return arr ;
+// 	if( arr.length <= 1 ) return arr ;
+// 	let left = [] , right = [] ;
+// 	let num = Math.floor( arr.length / 2 );
+// 	let numVal = arr.splice( num,1 )[0] ;
+// 	for (let i = 0; i < arr.length; i++) {
+// 		if( arr[i] < numVal ){
+// 			left.push(arr[i])
+// 		}else{
+// 			right.push(arr[i])
+// 		}
+// 	}
+// 	return [ ...mergeSort(left) , numVal , ...mergeSort(right) ]
+// }
 
-console.log(mergeSort(arr));
+// console.log(mergeSort(arr));
 
+// function debounce( fn , wait ){
+// 	let timer
+// 	return function(){
+// 		if( timer ) clearTimeout( timer );
+// 		timer = setTimeout( () => {
+// 			fn()
+// 		} ,wait)
+// 	}
+// }
+// function immediateDebounce(){
+// 	let timer ; 
+// 	return function(){
+// 		if( timer ) clearTimeout(timer);
+// 		let callNow = !timer ; 
+// 		timer = setTimeout(() => {
+// 			timer = null
+// 		},wait);
+// 		if( callNow ) fn();
+// 	}
+// }
+// var obj = {
+//     name : 'jack',
+//     age : 18
+// }
+// var name = 'rose';
+// var age = 10
+// function person( name , age ){
+//     console.log(this.name);
+//     console.log(this.age); 
+//     console.log(name);
+//     console.log(age);
+// }
+
+// Function.prototype.createApply = function(context){
+// 	var ctx = context||window ;
+// 	ctx.fn = this ; 
+// 	var _arg = [ ...arguments ][1]
+// 	var result = _arg ? ctx.fn(..._arg) : ctx.fn()
+// 	ctx.fn = null
+// 	return result 
+// }
+
+// Function.prototype.createCall = function(context){
+// 	var ctx = context || window ;
+// 	ctx.fn = this ;
+// 	var _arg = [ ...arguments ].slice(1)
+// 	var res = _arg ? ctx.fn(..._arg) : ctx.fn()
+// 	return res
+// }
+// Function.prototype.createBind = function(context){
+// 	var ctx = context ; 
+// 	var arg = [ ...arguments ].slice(1);
+// 	var _this = this 
+// 	return function(){
+// 		var _arg  = [ ...arguments ]
+// 		ctx.fn
+// 		_arg? _this.call( ..._arg , ...arg ) : _this.call( ..._arg )
+// 	}
+// }
+
+// person.createBind(obj,'hahah',111)
+
+// class Event{
+// 	constructor(){
+// 		this.handlers = {}
+// 	}
+// 	on(key,fn){
+// 		if( !this.handlers[key] ){
+// 			this.handlers[key] = []
+// 		}
+// 		this.handlers[key].push(fn)
+// 	}
+// 	trigger(key,...arg){
+// 		debugger
+// 		let fns = this.handlers[key];
+// 		if( !fns ||fns.length == 0 ){
+// 			return "Empty"
+// 		}
+// 		fns.forEach( fn => {
+// 			fn(...arg)
+// 		});
+// 	}
+// 	once(key , fn){
+// 		let _this = this ;
+// 		function _on(){
+// 			fn.call( this , ...arguments )
+// 			_this.remove(key , _on)
+
+// 		}
+// 		this.on( key , _on )
+// 	}
+// 	remove(key , fn){
+// 		let fns = this.handlers[key];
+// 		if( !fns ){
+// 			return false
+// 		}
+// 		if( !fn ){
+// 			fns && ( fns.length = 0 );
+// 		}
+// 		fns.forEach( (item,index) => {
+// 			item == fn &&  fns.splice( index,1 )
+// 		} )
+// 	}
+// }
+// let $event = new Event()
+// function handler(){
+// 	console.log(arguments);
+// 	console.log('fuck');
+// }
+// $event.on("fuckU",handler)
+// $event.once("fuckU",handler)
+// $event.trigger("fuckU","qwer","asdf")
+// $event.trigger("fuckU","qwer","asdf")
+
+// class Subject{
+// 	constructor(name){
+// 		this.name = name ;
+// 		this.state = "sleep"
+// 		this.observe = []
+// 	}
+// 	setState(state){
+// 		this.state = state ; 
+// 		this.observe.forEach( item => {
+// 			item.update && item.update(state)
+// 		} )
+// 	}
+// 	getState(){
+// 		return this.state
+// 	}
+// 	attach(...o){
+// 		this.observe.push(...o)
+// 	}
+// }
+// class Observe{
+// 	constructor(sub , name){
+// 		this.sub = sub ;
+// 		this.name = name
+// 	}
+// 	update(state){
+// 		console.log( `${this.name}say:${this.sub.name}${state}了` )
+// 	}
+// }
+
+// let s = new Subject("bb")
+// let father = new Observe( s , "baba" );
+// let mather = new Observe(s,'mama');
+
+// s.attach(father,mather)
+// s.setState('hahah')
+
+
+
+// function fun(n,o){
+//     console.log(o);
+//     return {
+//         fun:function(m){
+//             return fun(m,n);
+//         }
+//     };
+//  }
+ 
+//  var a = fun(0);   
+//  a.fun(1);   //0
+//  a.fun(2);  //0
+//  a.fun(3);//0
+
+//  var b = fun(0).fun(1).fun(2).fun(3);
+// // undefined  0 1 2
+
+//  var c = fun(0).fun(1);  
+//   // undefined 0 
+//  c.fun(2);  //1
+//  c.fun(3);//1
+
+
+// for (var i = 0; i < 10; i++ ) {
+//     // setTimeout(() => {
+//     //     console.log(i);
+//     // }, 1000);
+//     var i = 'es6'
+//     console.log(i);
+    
+// }
+// console.log(i);
+
+// new 
+
+// function Person( name , age){
+//     this.name = name ; 
+//     this.age = age ;
+// }
+
+// function myNew( constructor , ...props ){
+
+//     var newObj = new Object()
+//     newObj.__proto__ = constructor.prototype;
+//     var res = constructor.call( newObj , ...props )
+//     return typeof res == "object" ? res : newObj
+
+// }
+// var p = myNew( Person , 'rose',22 ) 
+// console.log(p);
+
+Promise.resolve().then( () => {
+    console.log(1);
+    setTimeout(() => {
+        console.log(2);
+    }, 0);
+} )
+
+setTimeout(() => {
+    console.log(3);
+    Promise.resolve().then( () => {
+        console.log(4);
+    } )
+}, 0);
+// 1 3 4 2

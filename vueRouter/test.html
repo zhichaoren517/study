@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- hash -->
+    <!-- <a href="#/home">首页</a>
+    <a href="#/about">关于</a> -->
+
+
+
+    <a onclick="go('/home')">首页</a>
+    <a onclick="go('/about')">关于</a>
+    <div id="html"></div>
+    <script>
+        // hash的原理
+        var html = document.getElementById('html')
+        // window.addEventListener( 'load' , () => {
+        //     html.innerHTML = location.hash.slice(1)
+        // } )
+        // window.addEventListener( 'hashchange', res => {
+        //     html.innerHTML = location.hash.slice(1)
+        // } )
+
+        // history 原理
+            function go(pathname){
+                console.log(pathname);
+                history.pushState( {} , null , pathname )
+                html.innerHTML = pathname
+            }
+            window.addEventListener( 'popstate',res=> {
+                console.log(res);
+                go(location.pathname)
+            } )
+    </script>
+</body>
+</html>

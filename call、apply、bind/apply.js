@@ -25,7 +25,6 @@ function person( name , age ){
     console.log(age);
 }
 Function.prototype.createApply = function( context ){
-
     let ctx = context || window;
         ctx.fn = this
     let _arg = [ ...arguments ][1];

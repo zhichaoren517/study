@@ -73,27 +73,50 @@
     所以说普通函数是没有状态,没有记忆的,例如下面的函数不管执行多少次,返回的都是1
 
 */
-var inc = function(){
-    var count = 0;
-    return ++ count
-}
+// var inc = function(){
+//     var count = 0;
+//     return ++ count
+// }
 // console.log( inc() );
 // console.log( inc() );
 
 // 闭包
-var obj = {
-    count : 0 , 
-    add : function(){
-        return ++ this.count
-    }
+// var obj = {
+//     count : 0 , 
+//     add : function(){
+//         return ++ this.count
+//     }
+// }
+// function add(){
+//     var count = 0 ;
+//     return function(){
+//         return ++ count
+//     }
+// }
+// var _add = add()
+// console.log( _add() );
+// console.log( _add() );
+
+
+
+
+
+function fun(n,o) {
+    console.log(o)
+    return {
+        fun:function(m){
+            debugger
+            return fun(m,n);    
+        }
+    };
 }
-function add(){
-    var count = 0 ;
-    return function(){
-        return ++ count
-    }
-}
-var _add = add()
-console.log( _add() );
-console.log( _add() );
+// var a = fun(0); 
+// a.fun(1); 
+// a.fun(2); 
+// a.fun(3);
+//undefined,?,?,?
+// var b = fun(0).fun(1).fun(2).fun(3);//undefined,?,?,?
+var c = fun(0).fun(1); 
+c.fun(2); 
+c.fun(3);//undefined,?,?,?
 

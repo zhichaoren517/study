@@ -62,7 +62,7 @@
 
 async function f(){
     let res = await Promise.resolve('duiduiuduiu');
-    await Promise.reject('cuocuocuo');
+    // await Promise.reject('cuocuocuo');
     return res
     // await Promise.resolve('duiduidi');
 }
